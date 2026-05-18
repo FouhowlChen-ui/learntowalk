@@ -1,0 +1,346 @@
+{
+  "_note_about_this_file": "注释键名以 _note_ 开头，json.load 后被 DictionableDataclass 自动忽略（仅按 walk/train/config.py 中 dataclass 的字段名解析）。请勿在 qpos_imitation_rewards / qvel_imitation_rewards / qpos_corridor_tolerance / qvel_corridor_tolerance / observation_*_keys / joint_limit_sensor_keys / reference_data_keys 这类列表/joint 字典里追加 _note 键，否则会被当成关节名误读。",
+  "_note_legend": "[LOCK] = 与模型/参考步态/评分契约绑定，禁改；[TUNABLE] = 允许调，但请保留字段；[TUNABLE-CARE] = 改了会改变评分语义，请在报告中说明；[EXPLORE] = 鼓励自由设计，是作业核心考点；[BROKEN] = 需要你自己诊断并修复。",
+  "_note_design_rationale": "本模板有两类「待你完成」的内容：(1) 奖励函数设计：reward_keys_and_weights 里所有权重默认为 0，需要你阅读 walk/envs/leg_imitation.py 与 leg_base.py 的奖励计算逻辑，根据步态分析结果给出非零权重；(2) PPO 超参数排错 / clip_fraction 接近 1 / reward 振荡或 NaN 的现象，请从 train_log.json 中诊断并修复。env_params 与 policy_params 是可工作的 baseline，原则上不必改；想做泛化或对比实验时再改并在报告里说明。",
+
+  "total_timesteps": ,
+  "_note_total_timesteps": "[TUNABLE] 总训练步数。",
+
+  "evaluate_param_list": [
+    {
+      "_note": "[LOCK] 评估侧固定参数；改动会让 run_eval 拿到与训练不一致的速度/时长，破坏 sim-ref 比较与评分。",
+      "num_timesteps": 600,
+      "evaluation_episodes": 5,
+      "min_target_velocity": 1.25,
+      "max_target_velocity": 1.25,
+      "target_velocity_period": 2,
+      "velocity_mode": "UNIFORM",
+      "cam_type": "follow",
+      "cam_distance": 2.5,
+      "visualize_activation": true
+    }
+  ],
+
+  "logger_params": {
+    "_note": "[LOCK] T1 自动评分依赖 train_log.json 的采样密度。",
+    "logging_frequency": 8,
+    "evaluate_frequency": 64,
+    "enable_evaluation": false
+  },
+
+  "env_params": {
+    "_note_section": "环境参数。LOCK 字段决定观测/动作/参考步态契约；TUNABLE 字段允许结合硬件与课程做尝试；EXPLORE 字段是作业要求自行设计/对比的部分。",
+
+    "env_id": "walkLeg26Imitation-v0",
+    "_note_env_id": "[LOCK] 与 myosuite 注册名 + walk.envs.leg26_imitation.MyoAssistLeg26Imitation 一一绑定。",
+
+    "model_path": "models/26muscle_3D/myoLeg26_BASELINE.xml",
+    "_note_model_path": "[LOCK] 26 肌 3D 骨肌模型；本作业统一在该模型上训练。",
+
+    "reference_data_path": "reference_data/short_reference_gait.npz",
+    "_note_reference_data_path": "[LOCK] 模仿步态文件。",
+
+    "num_envs": ,
+    "_note_num_envs": "[TUNABLE] 并行 env 数；按显存/CPU 调",
+
+    "seed": ,
+    "_note_seed": "[TUNABLE] 随机种子；做多次实验取均值时建议变。",
+
+    "control_framerate": 30,
+    "_note_control_framerate": "[LOCK] 30 Hz 控制频率；与参考步态采样率绑定。",
+
+    "physics_sim_framerate": 1200,
+    "_note_physics_sim_framerate": "[LOCK] 物理仿真子步频率。",
+
+    "safe_height": 0.7,
+    "_note_safe_height": "[TUNABLE-CARE] 摔倒终止阈值；改它会移动 D1.4 / D3 reward-hacking 的语义，需在报告里说明。",
+
+    "out_of_trajectory_threshold": 0.35,
+    "_note_out_of_trajectory_threshold": "[TUNABLE-CARE] 任意 qpos 偏离参考超过该值（rad）即终止；与 qpos_corridor_tolerance 共同塑造模仿严格度。",
+
+    "flag_random_ref_index": true,
+    "_note_flag_random_ref_index": "[TUNABLE] 每次 reset 是否在参考步态序列里随机起点。",
+
+    "min_target_velocity": 1.25,
+    "max_target_velocity": 1.25,
+    "min_target_velocity_period": 2,
+    "max_target_velocity_period": 10,
+    "_note_target_velocity_block": "[EXPLORE] 训练阶段 target velocity 的采样区间与变化周期（秒）。baseline 为单速 1.25 m/s。若想做速度课程改这 4 项即可；评估侧仍固定 1.25。",
+
+    "enable_lumbar_joint": false,
+    "lumbar_joint_fixed_angle": -0.13,
+    "lumbar_joint_damping_value": 0.05,
+    "_note_lumbar_block": "[EXPLORE] 是否解锁躯干（lumbar）关节。baseline 为 false（躯干锁定 -0.13 rad、阻尼 0.05）。",
+
+    "terrain_type": "flat",
+    "terrain_params": "",
+    "terrain_resample_per_reset": false,
+    "_note_terrain_block": "[EXPLORE] 地形配置。可选：flat / slope / slope_random / random / harmonic_sinusoidal。",
+
+    "mee_alpha": 1.5,
+    "mee_beta": 1.0,
+    "mee_k_energy": 0.2,
+    "mee_reference_rate": 1.35,
+    "_note_mee_block": "[TUNABLE] 代谢能量估计相关常数（Hill-type 模型 + 参考速率）；改它会改变 metabolic_energy_penalty 的绝对量级。",
+
+    "over_activation_threshold": 0.8,
+    "_note_over_activation_threshold": "[TUNABLE] 超过该激活值才计入 over_activation_penalty。",
+
+    "training_stage": 1,
+    "_note_training_stage": "[LOCK] 本 build 仅 stage1（人类基线模仿）。",
+
+    "observation_joint_pos_keys": [
+      "hip_flexion_l", "hip_flexion_r",
+      "hip_adduction_l", "hip_adduction_r",
+      "hip_rotation_l", "hip_rotation_r",
+      "knee_angle_l", "knee_angle_r",
+      "ankle_angle_l", "ankle_angle_r",
+      "pelvis_tilt",
+      "pelvis_list",
+      "pelvis_rotation",
+      "pelvis_ty",
+      "pelvis_tz"
+    ],
+    "_note_observation_joint_pos_keys": "[LOCK] 观测 qpos 列表（15 项）；删/改任一项 => 观测维度变化 => 与 [64,64] actor 网络对不上。",
+
+    "observation_joint_vel_keys": [
+      "hip_flexion_l", "hip_flexion_r",
+      "hip_adduction_l", "hip_adduction_r",
+      "hip_rotation_l", "hip_rotation_r",
+      "knee_angle_l", "knee_angle_r",
+      "ankle_angle_l", "ankle_angle_r",
+      "pelvis_tilt",
+      "pelvis_list",
+      "pelvis_rotation",
+      "pelvis_tx",
+      "pelvis_ty",
+      "pelvis_tz"
+    ],
+    "_note_observation_joint_vel_keys": "[LOCK] 观测 qvel 列表（16 项；多了 pelvis_tx 用于读前向速度）。",
+
+    "observation_sensor_keys": ["r_foot", "l_foot", "r_toes", "l_toes"],
+    "_note_observation_sensor_keys": "[LOCK] 4 个足底接触传感器；步态评估和 sim-ref 比较都依赖它。",
+
+    "joint_limit_sensor_keys": [
+      "r_hip_sensor",
+      "l_hip_sensor",
+      "r_knee_sensor",
+      "l_knee_sensor",
+      "r_ankle_sensor",
+      "l_ankle_sensor",
+      "r_mtp_sensor",
+      "l_mtp_sensor"
+    ],
+    "_note_joint_limit_sensor_keys": "[LOCK] 8 个关节限位传感器；joint_constraint_force_penalty 通过它们读取限位约束力。",
+
+    "qpos_corridor_tolerance": {
+      "pelvis_ty": 0.03,
+      "pelvis_tz": 0.05,
+      "pelvis_tilt": 0.069813,
+      "pelvis_list": 0.069813,
+      "pelvis_rotation": 0.087266,
+      "hip_flexion_l": 0.10472,
+      "hip_flexion_r": 0.10472,
+      "hip_adduction_l": 0.052360,
+      "hip_adduction_r": 0.052360,
+      "hip_rotation_l": 0.104720,
+      "hip_rotation_r": 0.104720,
+      "knee_angle_l": 0.087266,
+      "knee_angle_r": 0.087266,
+      "ankle_angle_l": 0.069813,
+      "ankle_angle_r": 0.069813
+    },
+    "_note_qpos_corridor_tolerance": "[LOCK] corridor 模仿奖励的容差（rad / m）。reward = dt·exp(-k·max(0, |Δq|-tol)²)。",
+
+    "qvel_corridor_tolerance": {
+      "pelvis_ty": 0.15,
+      "pelvis_tz": 0.20,
+      "pelvis_tilt": 0.349066,
+      "pelvis_list": 0.349066,
+      "pelvis_rotation": 0.349066,
+      "hip_flexion_l": 0.610865,
+      "hip_flexion_r": 0.610865,
+      "hip_adduction_l": 0.349066,
+      "hip_adduction_r": 0.349066,
+      "hip_rotation_l": 0.610865,
+      "hip_rotation_r": 0.610865,
+      "knee_angle_l": 0.698132,
+      "knee_angle_r": 0.698132,
+      "ankle_angle_l": 0.610865,
+      "ankle_angle_r": 0.610865
+    },
+    "_note_qvel_corridor_tolerance": "[LOCK] qvel corridor 容差。",
+
+    "reward_keys_and_weights": {
+      "_note_section": "[EXPLORE] 奖励函数设计是核心考点。下方所有权重默认为 0；请根据需要给非零权重。修改前先读 walk/envs/leg_imitation.py::_calculate_imitation_rewards 与 leg_base.py::_calculate_base_reward。",
+      "_note_imitation_keys": "qpos/qvel_imitation_rewards 已预填全部 15 个关节键，值=0 = 该关节不进入模仿奖励。,
+      "_note_optional_fields": "下方 11 个标量是可选的「整形 reward」，设为非零即启用。如需新建奖励项，请同步在 walk/train/config.py::RewardWeights 加字段，并在 walk/envs/leg_base.py::_calculate_base_reward 或 leg_imitation.py::_calculate_imitation_rewards 里写计算逻辑后塞进 base_reward dict。",
+
+      "qpos_imitation_rewards": {
+        "pelvis_ty": 0.0,
+        "pelvis_tz": 0.0,
+        "pelvis_tilt": 0.0,
+        "pelvis_list": 0.0,
+        "pelvis_rotation": 0.0,
+        "hip_flexion_l": 0.0,
+        "hip_flexion_r": 0.0,
+        "hip_adduction_l": 0.0,
+        "hip_adduction_r": 0.0,
+        "hip_rotation_l": 0.0,
+        "hip_rotation_r": 0.0,
+        "knee_angle_l": 0.0,
+        "knee_angle_r": 0.0,
+        "ankle_angle_l": 0.0,
+        "ankle_angle_r": 0.0
+      },
+
+      "qvel_imitation_rewards": {
+        "pelvis_ty": 0.0,
+        "pelvis_tz": 0.0,
+        "pelvis_tilt": 0.0,
+        "pelvis_list": 0.0,
+        "pelvis_rotation": 0.0,
+        "hip_flexion_l": 0.0,
+        "hip_flexion_r": 0.0,
+        "hip_adduction_l": 0.0,
+        "hip_adduction_r": 0.0,
+        "hip_rotation_l": 0.0,
+        "hip_rotation_r": 0.0,
+        "knee_angle_l": 0.0,
+        "knee_angle_r": 0.0,
+        "ankle_angle_l": 0.0,
+        "ankle_angle_r": 0.0
+      },
+
+      "end_effector_imitation_reward": 0.0,
+      "_note_end_effector_imitation_reward": "[EXPLORE] 末端模仿奖励（足部锚点）",
+
+      "forward_reward": 0.0,
+      "_note_forward_reward": "[EXPLORE] 跟踪 _target_velocity 的前向速度奖励。",
+
+      "muscle_activation_penalty": 0.0,
+      "_note_muscle_activation_penalty": "[EXPLORE] 总激活幅度惩罚（Σ act²）。",
+
+      "over_activation_penalty": 0.0,
+      "_note_over_activation_penalty": "[EXPLORE] 超过 over_activation_threshold 的激活部分加重惩罚。",
+
+      "muscle_activation_diff_penalty": 0.0,
+      "_note_muscle_activation_diff_penalty": "[EXPLORE] 激活变化率惩罚（平滑性）。",
+
+      "metabolic_energy_penalty": 0.0,
+      "_note_metabolic_energy_penalty": "[EXPLORE]代谢能量惩罚（与 mee_* 一起标定）。",
+
+      "footstep_delta_time": 0.0,
+      "_note_footstep_delta_time": "[EXPLORE] 步频/相位相关奖励，按步事件触发。",
+
+      "average_velocity_per_step": 0.0,
+      "_note_average_velocity_per_step": "[EXPLORE] 每步内平均速度奖励（步级而非帧级）。",
+
+      "muscle_activation_penalty_per_step": 0.0,
+      "_note_muscle_activation_penalty_per_step": "[EXPLORE] 每步内激活惩罚（步级）。",
+
+      "joint_constraint_force_penalty": 0.0,
+      "_note_joint_constraint_force_penalty": "[EXPLORE] 关节限位约束力惩罚（读 joint_limit_sensor_keys）。",
+
+      "foot_force_penalty": 0.0,
+      "_note_foot_force_penalty": "[EXPLORE] 足底总力惩罚（按体重归一）。"
+    },
+
+    "custom_max_episode_steps": 1000,
+    "_note_custom_max_episode_steps": "[LOCK] T1 D1.4「avg_episode_length」直接以 1000 作为优秀阈值。",
+
+    "reference_data_keys": [
+      "hip_flexion_l", "hip_flexion_r",
+      "hip_adduction_l", "hip_adduction_r",
+      "hip_rotation_l", "hip_rotation_r",
+      "knee_angle_l", "knee_angle_r",
+      "ankle_angle_l", "ankle_angle_r",
+      "pelvis_tilt",
+      "pelvis_list",
+      "pelvis_rotation",
+      "pelvis_tx",
+      "pelvis_ty",
+      "pelvis_tz"
+    ],
+    "_note_reference_data_keys": "[LOCK] 与 short_reference_gait.npz 的 series_data q_xxx / dq_xxx 字段一一对应。",
+
+    "prev_trained_policy_path": null,
+    "_note_prev_trained_policy_path": "[EXPLORE] 预训练权重路径，留 null 即从头训。指向已训 best_model.zip 时可做 fine-tune。"
+  },
+
+  "ppo_params": {
+    "_note_section": "[BROKEN] PPO 超参数：",
+
+    "learning_rate": 0.001,
+    "_note_learning_rate": "[BROKEN] 当前 1e-3，对 26 肌肉控制过大。",
+
+    "n_steps": 512,
+    "_note_n_steps": "[TUNABLE] 每 env 一次 rollout 的步数；与 num_envs 共同决定 buffer 大小（n_steps × num_envs）。",
+
+    "batch_size": 8192,
+    "_note_batch_size": "[TUNABLE] mini-batch；建议能整除 n_steps × num_envs。",
+
+    "n_epochs": 30,
+    "_note_n_epochs": "[TUNABLE] 每段 rollout 的更新轮数。和 learning_rate / target_kl 共同决定每段策略移动幅度。",
+
+    "gamma": 0.99,
+    "_note_gamma": "[TUNABLE] SB3 默认 0.99。行走任务长程依赖较强，通常合适。",
+
+    "gae_lambda": 0.95,
+    "_note_gae_lambda": "[TUNABLE] SB3 默认 0.95。0.9–0.97 之间较常用，越小偏差大方差小。",
+
+    "clip_range": 0.2,
+    "_note_clip_range": "[TUNABLE] SB3 默认 0.2。",
+
+    "clip_range_vf": 100,
+    "_note_clip_range_vf": "[TUNABLE] value function 的裁剪范围。",
+
+    "ent_coef": 0.01,
+    "_note_ent_coef": "[TUNABLE] entropy bonus 系数；SB3 默认 0.01。",
+
+    "vf_coef": 0.5,
+    "_note_vf_coef": "[TUNABLE] value loss 在总 loss 中的权重；SB3 默认 0.5。",
+
+    "max_grad_norm": 0.5,
+    "_note_max_grad_norm": "[TUNABLE] 全局梯度裁剪；SB3 默认 0.5。0.5–1.0 常用。",
+
+    "use_sde": false,
+    "_note_use_sde": "[TUNABLE] SB3 默认 false。是否启用 generalized State Dependent Exploration（连续动作的相关性探索）。本任务默认 false 即可；做对比实验时可试 true。",
+
+    "sde_sample_freq": -1,
+    "_note_sde_sample_freq": "[TUNABLE] SB3 默认 -1（每段开头采样一次）。仅在 use_sde=true 时有意义。",
+
+    "target_kl": null,
+
+    "device": "cuda",
+    "_note_device": "[TUNABLE] cuda / cpu。"
+  },
+
+  "policy_params": {
+    "custom_policy_params": {
+      "_note_section": "[EXPLORE] 网络结构与初始探索；保留 baseline 即可工作，做架构对比时再改。",
+
+      "reset_shared_net_after_load": false,
+      "reset_policy_net_after_load": false,
+      "reset_value_net_after_load": false,
+      "_note_reset_block": "[LOCK] 仅在 prev_trained_policy_path 非空时有效；本模板从头训，保留 false。",
+
+      "net_arch": {
+        "human_actor": [64, 64],
+        "common_critic": [128, 128]
+      },
+      "_note_net_arch": "[EXPLORE] 必须保留两个 key（human_actor / common_critic），值是隐藏层维度列表。可改宽改深，例如 [128,128,64] / [256,256]，注意参数量与显存。",
+
+      "log_std_init": 0.0,
+      "_note_log_std_init": "[TUNABLE] 初始 log_std。0.0 ⇒ std≈1，肌肉策略起步通常需要较高探索；过低（如 -2）会卡在低收益区。",
+
+      "net_indexing_info": {}
+    },
+    "_note_net_indexing_info": "[LOCK] 当前 build 不做按肌肉组分网，留空字典即可。"
+  },
+
+  "auto_reward_adjust_params": {
+    "learning_rate": 0.0
+  },
+  "_note_auto_reward_adjust_params": "[LOCK] 自动 reward 权重微调（学生不需要用），learning_rate=0 即关闭。"
+}
