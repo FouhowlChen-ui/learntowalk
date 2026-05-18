@@ -3,7 +3,7 @@
   "_note_legend": "[LOCK] = 与模型/参考步态/评分契约绑定，禁改；[TUNABLE] = 允许调，但请保留字段；[TUNABLE-CARE] = 改了会改变评分语义，请在报告中说明；[EXPLORE] = 鼓励自由设计，是作业核心考点；[BROKEN] = 需要你自己诊断并修复。",
   "_note_design_rationale": "本模板有两类「待你完成」的内容：(1) 奖励函数设计：reward_keys_and_weights 里所有权重默认为 0，需要你阅读 walk/envs/leg_imitation.py 与 leg_base.py 的奖励计算逻辑，根据步态分析结果给出非零权重；(2) PPO 超参数排错 / clip_fraction 接近 1 / reward 振荡或 NaN 的现象，请从 train_log.json 中诊断并修复。env_params 与 policy_params 是可工作的 baseline，原则上不必改；想做泛化或对比实验时再改并在报告里说明。",
 
-  "total_timesteps": ,
+  "total_timesteps": 200000, 
   "_note_total_timesteps": "[TUNABLE] 总训练步数。",
 
   "evaluate_param_list": [
@@ -40,10 +40,10 @@
     "reference_data_path": "reference_data/short_reference_gait.npz",
     "_note_reference_data_path": "[LOCK] 模仿步态文件。",
 
-    "num_envs": ,
+    "num_envs": 8,
     "_note_num_envs": "[TUNABLE] 并行 env 数；按显存/CPU 调",
 
-    "seed": ,
+    "seed": 42,
     "_note_seed": "[TUNABLE] 随机种子；做多次实验取均值时建议变。",
 
     "control_framerate": 30,
@@ -173,61 +173,61 @@
 
     "reward_keys_and_weights": {
       "_note_section": "[EXPLORE] 奖励函数设计是核心考点。下方所有权重默认为 0；请根据需要给非零权重。修改前先读 walk/envs/leg_imitation.py::_calculate_imitation_rewards 与 leg_base.py::_calculate_base_reward。",
-      "_note_imitation_keys": "qpos/qvel_imitation_rewards 已预填全部 15 个关节键，值=0 = 该关节不进入模仿奖励。,
+      "_note_imitation_keys": "qpos/qvel_imitation_rewards 已预填全部 15 个关节键，值=0 = 该关节不进入模仿奖励。",
       "_note_optional_fields": "下方 11 个标量是可选的「整形 reward」，设为非零即启用。如需新建奖励项，请同步在 walk/train/config.py::RewardWeights 加字段，并在 walk/envs/leg_base.py::_calculate_base_reward 或 leg_imitation.py::_calculate_imitation_rewards 里写计算逻辑后塞进 base_reward dict。",
 
       "qpos_imitation_rewards": {
-        "pelvis_ty": 0.0,
-        "pelvis_tz": 0.0,
-        "pelvis_tilt": 0.0,
-        "pelvis_list": 0.0,
-        "pelvis_rotation": 0.0,
-        "hip_flexion_l": 0.0,
-        "hip_flexion_r": 0.0,
-        "hip_adduction_l": 0.0,
-        "hip_adduction_r": 0.0,
-        "hip_rotation_l": 0.0,
-        "hip_rotation_r": 0.0,
-        "knee_angle_l": 0.0,
-        "knee_angle_r": 0.0,
-        "ankle_angle_l": 0.0,
-        "ankle_angle_r": 0.0
+        "pelvis_ty": 1.0,
+        "pelvis_tz": 1.0,
+        "pelvis_tilt": 1.0,
+        "pelvis_list": 1.0,
+        "pelvis_rotation": 1.0,
+        "hip_flexion_l": 1.0,
+        "hip_flexion_r": 1.0,
+        "hip_adduction_l": 1.0,
+        "hip_adduction_r": 1.0,
+        "hip_rotation_l": 1.0,
+        "hip_rotation_r": 1.0,
+        "knee_angle_l": 1.0,
+        "knee_angle_r": 1.0,
+        "ankle_angle_l": 1.0,
+        "ankle_angle_r": 1.0
       },
 
       "qvel_imitation_rewards": {
-        "pelvis_ty": 0.0,
-        "pelvis_tz": 0.0,
-        "pelvis_tilt": 0.0,
-        "pelvis_list": 0.0,
-        "pelvis_rotation": 0.0,
-        "hip_flexion_l": 0.0,
-        "hip_flexion_r": 0.0,
-        "hip_adduction_l": 0.0,
-        "hip_adduction_r": 0.0,
-        "hip_rotation_l": 0.0,
-        "hip_rotation_r": 0.0,
-        "knee_angle_l": 0.0,
-        "knee_angle_r": 0.0,
-        "ankle_angle_l": 0.0,
-        "ankle_angle_r": 0.0
+        "pelvis_ty": 1.0,
+        "pelvis_tz": 1.0,
+        "pelvis_tilt": 1.0,
+        "pelvis_list": 1.0,
+        "pelvis_rotation": 1.0,
+        "hip_flexion_l": 1.0,
+        "hip_flexion_r": 1.0,
+        "hip_adduction_l": 1.0,
+        "hip_adduction_r": 1.0,
+        "hip_rotation_l": 1.0,
+        "hip_rotation_r": 1.0,
+        "knee_angle_l": 1.0,
+        "knee_angle_r": 1.0,
+        "ankle_angle_l": 1.0,
+        "ankle_angle_r": 1.0
       },
 
-      "end_effector_imitation_reward": 0.0,
+      "end_effector_imitation_reward": 1.0,
       "_note_end_effector_imitation_reward": "[EXPLORE] 末端模仿奖励（足部锚点）",
 
-      "forward_reward": 0.0,
+      "forward_reward": 1.0,
       "_note_forward_reward": "[EXPLORE] 跟踪 _target_velocity 的前向速度奖励。",
 
-      "muscle_activation_penalty": 0.0,
+      "muscle_activation_penalty": 0.05,
       "_note_muscle_activation_penalty": "[EXPLORE] 总激活幅度惩罚（Σ act²）。",
 
-      "over_activation_penalty": 0.0,
+      "over_activation_penalty": 0.05,
       "_note_over_activation_penalty": "[EXPLORE] 超过 over_activation_threshold 的激活部分加重惩罚。",
 
       "muscle_activation_diff_penalty": 0.0,
       "_note_muscle_activation_diff_penalty": "[EXPLORE] 激活变化率惩罚（平滑性）。",
 
-      "metabolic_energy_penalty": 0.0,
+      "metabolic_energy_penalty": 0.03,
       "_note_metabolic_energy_penalty": "[EXPLORE]代谢能量惩罚（与 mee_* 一起标定）。",
 
       "footstep_delta_time": 0.0,
@@ -239,10 +239,10 @@
       "muscle_activation_penalty_per_step": 0.0,
       "_note_muscle_activation_penalty_per_step": "[EXPLORE] 每步内激活惩罚（步级）。",
 
-      "joint_constraint_force_penalty": 0.0,
+      "joint_constraint_force_penalty": 0.02,
       "_note_joint_constraint_force_penalty": "[EXPLORE] 关节限位约束力惩罚（读 joint_limit_sensor_keys）。",
 
-      "foot_force_penalty": 0.0,
+      "foot_force_penalty": 0.02,
       "_note_foot_force_penalty": "[EXPLORE] 足底总力惩罚（按体重归一）。"
     },
 
@@ -271,7 +271,7 @@
   "ppo_params": {
     "_note_section": "[BROKEN] PPO 超参数：",
 
-    "learning_rate": 0.001,
+    "learning_rate": 0.0001,
     "_note_learning_rate": "[BROKEN] 当前 1e-3，对 26 肌肉控制过大。",
 
     "n_steps": 512,

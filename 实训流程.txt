@@ -5,3 +5,11 @@
  第三阶段：评估与数据分析（训练后）不能仅仅看奖励分数值，必须从生物力学角度验证模型。运行评估脚本：使用命令 bash EXAM/eval.sh results/train_session_<时间戳> --best-eval 对你表现最好的模型进行全面评估。多维度验证步态：结合评估产出的图表（如速度着色关节角图、左右对称性对比、仿真与参考步态对比等），分析步态的平滑性和合理性，确保没有怪异的动作。
 
 第四阶段：报告撰写与打包提交（交付）严格按照规范打包，避免因为格式问题丢分。撰写 3-5 页实验报告 (report.pdf)：记录你的实验配置和硬件信息。解释你设计奖励权重的思路，并提供不同权重组合的消融实验（Ablation）对比。分析训练曲线和评估结果（引用生成的指标 CSV 和回放视频），并客观指出当前步态仍存在的问题。编写 README.md：提供一句话速览，包含你的学号姓名、实际跑的 step 数量、在 JSON 里的关键改动，以及供老师复制的完整复现命令。按严格目录结构打包：将 15 个必交文件（包含配置、日志、最佳权重 best_model.zip、评估文件夹 eval_results/ 的全部产物以及报告）压缩为 submission_<学号>_<姓名>.zip。红线警告：压缩包必须控制在 45 MB ~ 100 MB 之间，绝对不要包含 code/ 目录，也不要提交任何未在规定清单内的模型切片（checkpoint）。
+
+echo "# learntowalk" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:FouhowlChen-ui/learntowalk.git
+git push -u origin main
