@@ -1,7 +1,7 @@
 {
-  "best_checkpoint": 10035200,
-  "best_score": 0.5170148447178804,
-  "no_improve_segments": 0,
+  "best_checkpoint": 19066880,
+  "best_score": 0.8143143724512193,
+  "no_improve_segments": 1,
   "history": [
     {
       "checkpoint": 1003520,
@@ -92,6 +92,96 @@
       "std": 0.7687762379646301,
       "value_loss": 0.019273285195231436,
       "improved": true
+    },
+    {
+      "checkpoint": 11038720,
+      "score": 0.5638245109332134,
+      "log_num_timesteps": 10987520,
+      "average_reward_per_episode": 0.5638245109332134,
+      "std": 0.7678965926170349,
+      "value_loss": 0.023650930542498828,
+      "improved": true
+    },
+    {
+      "checkpoint": 12042240,
+      "score": 0.609377788702286,
+      "log_num_timesteps": 11970560,
+      "average_reward_per_episode": 0.609377788702286,
+      "std": 0.7704095244407654,
+      "value_loss": 0.025846641324460507,
+      "improved": true
+    },
+    {
+      "checkpoint": 13045760,
+      "score": 0.667462183051617,
+      "log_num_timesteps": 13035520,
+      "average_reward_per_episode": 0.667462183051617,
+      "std": 0.7778512835502625,
+      "value_loss": 0.028934994526207448,
+      "improved": true
+    },
+    {
+      "checkpoint": 14049280,
+      "score": 0.7035741478738525,
+      "log_num_timesteps": 14018560,
+      "average_reward_per_episode": 0.7035741478738525,
+      "std": 0.7861104011535645,
+      "value_loss": 0.02807429526001215,
+      "improved": true
+    },
+    {
+      "checkpoint": 15052800,
+      "score": 0.7282264077928082,
+      "log_num_timesteps": 15001600,
+      "average_reward_per_episode": 0.7282264077928082,
+      "std": 0.7938219308853149,
+      "value_loss": 0.030808751843869685,
+      "improved": true
+    },
+    {
+      "checkpoint": 16056320,
+      "score": 0.7671349815978143,
+      "log_num_timesteps": 15984640,
+      "average_reward_per_episode": 0.7671349815978143,
+      "std": 0.8054178953170776,
+      "value_loss": 0.031085077207535505,
+      "improved": true
+    },
+    {
+      "checkpoint": 17059840,
+      "score": 0.7925738745640503,
+      "log_num_timesteps": 17049600,
+      "average_reward_per_episode": 0.7925738745640503,
+      "std": 0.817124605178833,
+      "value_loss": 0.027174319326877593,
+      "improved": true
+    },
+    {
+      "checkpoint": 18063360,
+      "score": 0.7864384192813986,
+      "log_num_timesteps": 18032640,
+      "average_reward_per_episode": 0.7864384192813986,
+      "std": 0.8296881914138794,
+      "value_loss": 0.032014042418450114,
+      "improved": false
+    },
+    {
+      "checkpoint": 19066880,
+      "score": 0.8143143724512193,
+      "log_num_timesteps": 19015680,
+      "average_reward_per_episode": 0.8143143724512193,
+      "std": 0.840338945388794,
+      "value_loss": 0.031253556720912457,
+      "improved": true
+    },
+    {
+      "checkpoint": 20008960,
+      "score": 0.8227573624811411,
+      "log_num_timesteps": 19998720,
+      "average_reward_per_episode": 0.8227573624811411,
+      "std": 0.8549787402153015,
+      "value_loss": 0.030251360684633254,
+      "improved": false
     }
   ]
 }
