@@ -1,0 +1,61 @@
+{
+  "best_checkpoint": 6094848,
+  "best_score": 1.0886870910796829,
+  "no_improve_segments": 0,
+  "history": [
+    {
+      "checkpoint": 1015808,
+      "score": 0.2519942792913352,
+      "log_num_timesteps": 933888,
+      "average_reward_per_episode": 0.2519942792913352,
+      "std": 0.8436049222946167,
+      "value_loss": 0.004304589610546828,
+      "improved": true
+    },
+    {
+      "checkpoint": 2031616,
+      "score": 0.3426187153748799,
+      "log_num_timesteps": 1982464,
+      "average_reward_per_episode": 0.3426187153748799,
+      "std": 0.7072523832321167,
+      "value_loss": 0.006675973363841573,
+      "improved": true
+    },
+    {
+      "checkpoint": 3047424,
+      "score": 0.4704761529010229,
+      "log_num_timesteps": 3031040,
+      "average_reward_per_episode": 0.4704761529010229,
+      "std": 0.6151415109634399,
+      "value_loss": 0.01222072884750863,
+      "improved": true
+    },
+    {
+      "checkpoint": 4063232,
+      "score": 0.6249370408693126,
+      "log_num_timesteps": 3948544,
+      "average_reward_per_episode": 0.6249370408693126,
+      "std": 0.5538226962089539,
+      "value_loss": 0.025678935491790376,
+      "improved": true
+    },
+    {
+      "checkpoint": 5079040,
+      "score": 0.8577237757340411,
+      "log_num_timesteps": 4997120,
+      "average_reward_per_episode": 0.8577237757340411,
+      "std": 0.5029710531234741,
+      "value_loss": 0.04086727934579055,
+      "improved": true
+    },
+    {
+      "checkpoint": 6094848,
+      "score": 1.0886870910796829,
+      "log_num_timesteps": 6045696,
+      "average_reward_per_episode": 1.0886870910796829,
+      "std": 0.4753642678260803,
+      "value_loss": 0.0440857553233703,
+      "improved": true
+    }
+  ]
+}
