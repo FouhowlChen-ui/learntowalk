@@ -13,3 +13,9 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin git@github.com:FouhowlChen-ui/learntowalk.git
 git push -u origin main
+
+
+bash train.sh
+bash eval_one.sh
+会话目录:
+/inspire/hdd/project/26summer-camp-08/26220015/EXAM/results/train_session_20260518-142031

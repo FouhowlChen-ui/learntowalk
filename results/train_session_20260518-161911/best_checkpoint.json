@@ -1,0 +1,16 @@
+{
+  "best_checkpoint": 1003520,
+  "best_score": 0.2682935632802951,
+  "no_improve_segments": 0,
+  "history": [
+    {
+      "checkpoint": 1003520,
+      "score": 0.2682935632802951,
+      "log_num_timesteps": 987136,
+      "average_reward_per_episode": 0.2682935632802951,
+      "std": 0.8428998589515686,
+      "value_loss": 0.004466480798631285,
+      "improved": true
+    }
+  ]
+}
